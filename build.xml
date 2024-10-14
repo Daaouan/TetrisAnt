@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Compilation de Tetris" default="all" xmlns:ivy="antlib:org.apache.ivy.ant" basedir=".">
+    <!-- Property Definitions -->
+    <property name="src.dir" location="src" />
+    <property name="obj.dir" location="bin" />
+    <property name="lib.dir" location="lib" />
+    <property name="test.dir" location="test" />
+    <property name="test.results.dir" location="bin/test-results" />
+    <property name="test.reports" location="test-reports" />
+    <property name="doc.dir" location="javadoc" />
+
+    <!-- Declare the Ivy tasks for Ant -->
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant"/>
+
+    <!-- Retrieve dependencies -->
+    <target name="retrieve">
+        <ivy:settings />
+        <ivy:resolve />
+        <ivy:retrieve sync="true" type="jar" />
+    </target>
+
+    <!-- Clean target -->
+    <target name="clean">
+        <echo message="Suppression des fichiers issus de la compilation" />
+        <delete dir="${obj.dir}" />
+        <delete dir="${lib.dir}" />
+        <delete dir="${test.results.dir}" />
+        <delete dir="${test.reports}" />
+        <delete dir="${doc.dir}" />
+    </target>
+
+    <!-- Compile target -->
+    <target name="compile" depends="retrieve">
+        <mkdir dir="${obj.dir}" />
+        <javac srcdir="${src.dir}" includeantruntime="false" destdir="${obj.dir}" classpathref="ivy.classpath" />
+    </target>
+
+    <!-- Compile-test target -->
+    <target name="compile-test" depends="compile">
+        <mkdir dir="${obj.dir}" />
+        <javac srcdir="${test.dir}" destdir="${obj.dir}" classpathref="ivy.classpath" />
+    </target>
+
+    <!-- Test target using JUnit -->
+    <target name="test" depends="compile-test">
+        <mkdir dir="${test.results.dir}" />
+        <junit printsummary="on" haltonfailure="yes">
+            <classpath>
+                <path refid="ivy.classpath" />
+                <pathelement location="${obj.dir}" />
+            </classpath>
+            <formatter type="plain" />
+            <formatter type="xml" />
+            <batchtest todir="${test.results.dir}">
+                <fileset dir="${test.dir}">
+                    <include name="**/*Test.java" />
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+    <!-- Test-reports target to generate HTML reports -->
+    <target name="test-reports" depends="test">
+        <mkdir dir="${test.reports}" />
+        <junitreport todir="${test.reports}">
+            <fileset dir="${test.results.dir}">
+                <include name="**/*.xml" />
+            </fileset>
+            <report format="frames" todir="${test.reports}" />
+        </junitreport>
+    </target>
+
+    <!-- Javadoc target -->
+    <target name="javadoc">
+        <mkdir dir="${doc.dir}" />
+        <javadoc sourcepath="${src.dir}" destdir="${doc.dir}" classpathref="ivy.classpath" />
+    </target>
+
+    <!-- Dist target to create the JAR file -->
+    <target name="dist" depends="clean,compile">
+        <mkdir dir="dist" />
+        <jar destfile="dist/Tetris.jar" basedir="${obj.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="fr.ubo.tetris.Tetris" />
+            	<attribute name="Class-Path" value="/lib/commons-lang3-3.12.0.jar" />
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- All target that runs everything -->
+    <target name="all" depends="dist, test-reports, javadoc">
+        <echo message="Build complete: JAR creation, test execution, report generation, and documentation finished." />
+    </target>
+
+    <!-- Define the Ivy classpath -->
+    <path id="ivy.classpath">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+</project>
