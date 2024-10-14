@@ -14,7 +14,7 @@ build:
     - main
     - develop
   tags:
-    - my_custom_runner
+    - DM_custom_runner
   artifacts:
     paths:
       - output/
