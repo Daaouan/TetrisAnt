@@ -14,7 +14,7 @@ build:
     - main
     - develop
   tags:
-    - global_slave
+    - my_custom_runner
   artifacts:
     paths:
       - output/
