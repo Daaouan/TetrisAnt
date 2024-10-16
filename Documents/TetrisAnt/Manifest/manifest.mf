@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Built-By: DAAOUAN
+Implementation-Version: 1.0.0
+Main-Class: fr.ubo.tetris.Tetris.MainClass
+Class-Path: libs/commons-lang3-3.12.0.jar
