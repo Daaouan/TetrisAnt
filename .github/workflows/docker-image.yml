@@ -1,0 +1,28 @@
+name: Build Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker Image
+        run: |
+          echo "Checking files in current directory:"
+          ls -l 
+          docker build -t tetrisant_image:latest .
+      - name: Upload Tetris.jar
+        uses: actions/upload-artifact@v3
+        with:
+          name: Tetris.jar
+          path: dist/Tetris.jar
