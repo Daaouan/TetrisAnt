@@ -19,3 +19,14 @@ build:
   artifacts:
     paths:
       - dist/Tetris.jar
+
+push:
+  stage: deploy 
+  script:
+    - docker tag $DOCKER_IMAGE $CI_REGISTRY/tetrisant_image:${CI_COMMIT_TAG}
+    - docker push $CI_REGISTRY/tetrisant_image:${CI_COMMIT_TAG}
+  only:
+    - /^(\d+\.\d+\.\d+)$/
+  when: manual
+  tags:
+    - dosi
