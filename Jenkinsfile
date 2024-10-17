@@ -1,8 +1,8 @@
 pipeline {
     agent any
     environment {
-        DOCKER_USERNAME = 'your-dockerhub-username'
-        DOCKER_PASSWORD = 'your-dockerhub-password'
+        DOCKER_USERNAME = "${DOCKER_USERNAME}"
+        DOCKER_PASSWORD = "${DOCKER_PASSWORD}"
         IMAGE_NAME = "${DOCKER_USERNAME}/tetrisant:${env.GIT_COMMIT}"
     }
     stages {
