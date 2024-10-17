@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        DOCKER_USERNAME = "${DOCKER_USERNAME}"
-        DOCKER_PASSWORD = "${DOCKER_PASSWORD}"
-        IMAGE_NAME = "${DOCKER_USERNAME}/tetrisant:${env.GIT_COMMIT}"
+        DOCKER_USERNAME = "${DOCKER_USERNAME}" // Ensure this is set in Jenkins credentials or environment variables
+        DOCKER_PASSWORD = "${DOCKER_PASSWORD}" // Ensure this is set in Jenkins credentials or environment variables
+        IMAGE_NAME = "${DOCKER_USERNAME}/tetrisant:${env.GIT_COMMIT}" // Use GIT_COMMIT for image tagging
     }
     stages {
         stage('Build Image') {
@@ -11,19 +11,29 @@ pipeline {
                 script {
                     echo "Building Docker image..."
                     sh "docker build -t ${IMAGE_NAME} ."
+                    echo "Docker image built successfully!"
                 }
             }
-        }
-        stage('Push Image') {
+            // This step runs only on the 'main' branch
             when {
                 branch 'main'
             }
+        }
+        
+        stage('Publish Image') {
             steps {
                 script {
-                    echo "Logging into DockerHub..."
-                    sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
+                    echo "Publishing the application..."
+                    echo "${DOCKER_PASSWORD}" | sh "docker login -u ${DOCKER_USERNAME} --password-stdin"
                     echo "Pushing the image to DockerHub..."
                     sh "docker push ${IMAGE_NAME}"
+                }
+            }
+            // This step runs manually and only on 'main' and tag branches
+            when {
+                allOf {
+                    branch 'main'
+                    triggeredBy 'manual' // Ensure the step can be triggered manually
                 }
             }
         }
@@ -31,7 +41,7 @@ pipeline {
     post {
         always {
             echo 'Cleaning up...'
-            sh "docker rmi ${IMAGE_NAME} || true"
+            sh "docker rmi ${IMAGE_NAME} || true" // Clean up the image after the job
         }
     }
 }
