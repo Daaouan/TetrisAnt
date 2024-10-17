@@ -14,10 +14,6 @@ pipeline {
                     echo "Docker image built successfully!"
                 }
             }
-            // This step runs only on the 'main' branch
-            when {
-                branch 'main'
-            }
         }
         
         stage('Publish Image') {
@@ -32,7 +28,6 @@ pipeline {
             // This step runs manually and only on 'main' and tag branches
             when {
                 allOf {
-                    branch 'main'
                     triggeredBy 'manual' // Ensure the step can be triggered manually
                 }
             }
