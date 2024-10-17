@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker { 
-            image 'docker:latest' 
-            args '-v /var/run/docker.sock:/var/run/docker.sock' // If needed to use Docker-in-Docker
-        }
-    }
+    agent any
     environment {
         DOCKER_USERNAME = 'your-dockerhub-username'
         DOCKER_PASSWORD = 'your-dockerhub-password'
