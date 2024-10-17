@@ -32,7 +32,7 @@
     <!-- Compile target -->
     <target name="compile" depends="retrieve">
         <mkdir dir="${obj.dir}" />
-        <javac srcdir="${src.dir}" includeantruntime="false" destdir="${obj.dir}" classpathref="ivy.classpath" />
+        <javac srcdir="${src.dir}" includeantruntime="false" destdir="${obj.dir}" source="17" target="17" classpathref="ivy.classpath" />
     </target>
 
     <!-- Compile-test target -->
